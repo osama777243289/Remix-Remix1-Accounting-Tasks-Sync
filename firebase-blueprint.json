@@ -1,0 +1,373 @@
+{
+  "entities": {
+    "account": {
+      "title": "Account",
+      "description": "A financial account in the chart of accounts.",
+      "type": "object",
+      "properties": {
+        "code": { "type": "string" },
+        "name": { "type": "string" },
+        "type": { "type": "string", "enum": ["asset", "liability", "equity", "revenue", "expense"] },
+        "parentId": { "type": "string" },
+        "balance": { "type": "number" },
+        "currency": { "type": "string" },
+        "notes": { "type": "string" },
+        "isTransactional": { "type": "boolean" },
+        "classification": { "type": "string", "enum": ["cashbox", "client", "supplier", "employee", "operating_expense", "general_expense", "cost", "revenue", "general"] },
+        "category": { "type": "string", "enum": ["cash", "client", "supplier", "employee", "expense", "revenue", "general"] },
+        "status": { "type": "string", "enum": ["active", "suspended", "reports_only"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["code", "name", "type", "balance", "currency", "isTransactional"]
+    },
+    "currency": {
+      "title": "Currency",
+      "description": "A supported currency and its exchange rate base.",
+      "type": "object",
+      "properties": {
+        "code": { "type": "string" },
+        "name": { "type": "string" },
+        "symbol": { "type": "string" },
+        "rateToBase": { "type": "number" },
+        "isBase": { "type": "boolean" }
+      },
+      "required": ["code", "name", "symbol", "rateToBase", "isBase"]
+    },
+    "task": {
+      "title": "Task",
+      "description": "An accounting task to be performed.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "dueDate": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "completed"] },
+        "priority": { "type": "string", "enum": ["low", "medium", "high"] },
+        "linkedAccountId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "description", "dueDate", "status", "priority", "linkedAccountId"]
+    },
+    "transaction": {
+      "title": "Transaction",
+      "description": "A double-entry financial transaction record.",
+      "type": "object",
+      "properties": {
+        "date": { "type": "string" },
+        "description": { "type": "string" },
+        "debitAccountId": { "type": "string" },
+        "creditAccountId": { "type": "string" },
+        "amount": { "type": "number" },
+        "rate": { "type": "number" },
+        "currency": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["date", "description", "debitAccountId", "creditAccountId", "amount", "rate", "currency"]
+    },
+    "hall": {
+      "title": "Hall",
+      "description": "An event hall managed by the system.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "capacity": { "type": "number" },
+        "price": { "type": "number" },
+        "currency": { "type": "string" },
+        "location": { "type": "string" },
+        "features": { "type": "array", "items": { "type": "string" } },
+        "status": { "type": "string", "enum": ["active", "maintenance", "inactive"] },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "capacity", "price", "currency", "status"]
+    },
+    "booking": {
+      "title": "Booking",
+      "description": "A hall booking record.",
+      "type": "object",
+      "properties": {
+        "hallId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "eventDates": { "type": "array", "items": { "type": "string" } },
+        "days": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": { "type": "string" },
+              "startTime": { "type": "string" },
+              "endTime": { "type": "string" },
+              "price": { "type": "number" },
+              "discount": { "type": "number" },
+              "status": { "type": "string" }
+            }
+          }
+        },
+        "additionalServices": { 
+          "type": "array", 
+          "items": { 
+            "type": "object", 
+            "properties": { "name": { "type": "string" }, "cost": { "type": "number" } } 
+          } 
+        },
+        "period": { "type": "string", "enum": ["morning", "evening", "night"] },
+        "totalPrice": { "type": "number" },
+        "paidAmount": { "type": "number" },
+        "mortgageAmount": { "type": "number" },
+        "mortgageStatus": { "type": "string", "enum": ["pending", "held", "returned", "forfeited"] },
+        "insuranceAmount": { "type": "number" },
+        "pledgesDescription": { "type": "string" },
+        "pledgeImage": { "type": "string" },
+        "customerIdType": { "type": "string" },
+        "customerIdNumber": { "type": "string" },
+        "customerIdIssueDate": { "type": "string" },
+        "customerIdExpiryDate": { "type": "string" },
+        "customerIdIssuePlace": { "type": "string" },
+        "customerIdFrontImage": { "type": "string" },
+        "customerIdBackImage": { "type": "string" },
+        "currency": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "confirmed", "completed", "cancelled"] },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "linkedTransactionId": { "type": "string" },
+        "brokerId": { "type": "string" },
+        "brokerName": { "type": "string" },
+        "guarantorId": { "type": "string" },
+        "guarantorName": { "type": "string" }
+      },
+      "required": ["hallId", "customerName", "customerPhone", "eventDates", "period", "totalPrice", "paidAmount", "currency", "status"]
+    },
+    "client": {
+      "title": "Client",
+      "description": "A client record.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "address": { "type": "string" },
+        "linkedAccountId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "phone", "linkedAccountId"]
+    },
+    "employee": {
+      "title": "Employee",
+      "description": "An employee record.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "position": { "type": "string" },
+        "phone": { "type": "string" },
+        "salary": { "type": "number" },
+        "currency": { "type": "string" },
+        "linkedAccountId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "position", "phone", "salary", "currency", "linkedAccountId"]
+    },
+    "service": {
+      "title": "Service",
+      "description": "An additional service record.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "price": { "type": "number" },
+        "currency": { "type": "string" },
+        "category": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "description", "price", "currency", "category"]
+    },
+    "user": {
+      "title": "User",
+      "description": "A system user record.",
+      "type": "object",
+      "properties": {
+        "username": { "type": "string" },
+        "email": { "type": "string" },
+        "roleId": { "type": "string" },
+        "status": { "type": "string", "enum": ["active", "suspended"] },
+        "lastLogin": { "type": "string", "format": "date-time" }
+      },
+      "required": ["username", "email", "roleId", "status"]
+    },
+    "role": {
+      "title": "Role",
+      "description": "A user role with specific permissions.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "permissions": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["name", "permissions"]
+    },
+    "receipt_payment": {
+      "title": "ReceiptPayment",
+      "description": "A receipt or payment voucher record.",
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "enum": ["receipt", "payment"] },
+        "date": { "type": "string" },
+        "amount": { "type": "number" },
+        "currency": { "type": "string" },
+        "fromToAccountId": { "type": "string" },
+        "cashBankAccountId": { "type": "string" },
+        "description": { "type": "string" },
+        "linkedBookingId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["type", "date", "amount", "currency", "fromToAccountId", "cashBankAccountId", "description"]
+    },
+    "authorized_device": {
+      "title": "AuthorizedDevice",
+      "description": "A record of an authorized device.",
+      "type": "object",
+      "properties": {
+        "deviceName": { "type": "string" },
+        "deviceType": { "type": "string" },
+        "userAgent": { "type": "string" },
+        "isAuthorized": { "type": "boolean" },
+        "registeredAt": { "type": "string", "format": "date-time" },
+        "lastActive": { "type": "string", "format": "date-time" },
+        "requestIp": { "type": "string" },
+        "adminNotes": { "type": "string" },
+        "hardwareSpecs": { "type": "string" },
+        "canvasHash": { "type": "string" },
+        "securityLevel": { "type": "string" },
+        "tamperCount": { "type": "number" },
+        "os": { "type": "string" },
+        "browser": { "type": "string" }
+      },
+      "required": ["deviceName", "deviceType", "isAuthorized"]
+    },
+    "company_settings": {
+      "title": "CompanySettings",
+      "description": "Information about the company for reports and prints.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "logo": { "type": "string" },
+        "address": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "website": { "type": "string" },
+        "taxNumber": { "type": "string" },
+        "crNumber": { "type": "string" },
+        "notes": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name"]
+    },
+    "booking_settings": {
+      "title": "BookingSettings",
+      "description": "Settings for default booking periods and default additional services.",
+      "type": "object",
+      "properties": {
+        "periods": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "startTime": { "type": "string" },
+              "endTime": { "type": "string" }
+            }
+          }
+        },
+        "defaultServices": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "cost": { "type": "number" }
+            }
+          }
+        },
+        "defaultStatus": { "type": "string" },
+        "defaultCurrency": { "type": "string" },
+        "policyNotes": { "type": "array", "items": { "type": "string" } },
+        "finesAccountId": { "type": "string" },
+        "accountsReceivableId": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "deposit_refund_request": {
+      "title": "DepositRefundRequest",
+      "description": "A request to refund a deposit.",
+      "type": "object",
+      "properties": {
+        "bookingId": { "type": "string" },
+        "bookingCode": { "type": "string" },
+        "customerName": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "hallId": { "type": "string" },
+        "depositAmount": { "type": "number" },
+        "requestedAmount": { "type": "number" },
+        "fineAmount": { "type": "number" },
+        "refundableAmount": { "type": "number" },
+        "cancelBooking": { "type": "boolean" },
+        "cancelledDayDates": { "type": "array", "items": { "type": "string" } },
+        "justification": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+        "approvedAmount": { "type": "number" },
+        "managerNotes": { "type": "string" },
+        "createdBy": { "type": "string" },
+        "approvedBy": { "type": "string" },
+        "approvedAt": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["bookingId", "customerName", "depositAmount", "requestedAmount", "justification", "status", "createdBy", "createdAt"]
+    },
+    "manual_notification": {
+      "title": "Manual Notification",
+      "description": "A manual notification sent by an admin or authorized user to target users.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "body": { "type": "string" },
+        "type": { "type": "string", "enum": ["congratulations", "meeting", "work_hours", "holiday", "other"] },
+        "senderId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "targetUserIds": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "body", "type", "senderId", "senderName", "targetUserIds", "createdAt"]
+    },
+    "account_notification_subscription": {
+      "title": "Account Notification Subscription",
+      "description": "Mapping of a user to accounts they receive movement notifications for.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "accountIds": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["userId", "accountIds"]
+    }
+  },
+  "firestore": {
+    "company_settings/{settingId}": { "schema": "company_settings", "description": "Company profile data" },
+    "booking_settings/{settingId}": { "schema": "booking_settings", "description": "Booking interface presets and defaults" },
+    "accounts/{accountId}": { "schema": "account", "description": "Financial ledger accounts" },
+    "currencies/{currencyId}": { "schema": "currency", "description": "Supported currency configuration" },
+    "tasks/{taskId}": { "schema": "task", "description": "Task management items" },
+    "transactions/{transactionId}": { "schema": "transaction", "description": "Double-entry accounting journal entries" },
+    "halls/{hallId}": { "schema": "hall", "description": "Event halls" },
+    "bookings/{bookingId}": { "schema": "booking", "description": "Hall bookings" },
+    "clients/{clientId}": { "schema": "client", "description": "Clients data" },
+    "employees/{employeeId}": { "schema": "employee", "description": "Employees data" },
+    "services/{serviceId}": { "schema": "service", "description": "Additional services" },
+    "app_users/{userId}": { "schema": "user", "description": "System users" },
+    "app_roles/{roleId}": { "schema": "role", "description": "User roles" },
+    "vouchers/{voucherId}": { "schema": "receipt_payment", "description": "Receipts and payments" },
+    "authorized_devices/{deviceId}": { "schema": "authorized_device", "description": "Authorized devices" },
+    "deposit_refund_requests/{requestId}": { "schema": "deposit_refund_request", "description": "Deposit refund requests" },
+    "manual_notifications/{notificationId}": { "schema": "manual_notification", "description": "Manual custom notifications dispatched to selected users" },
+    "account_notification_subscriptions/{subscriptionId}": { "schema": "account_notification_subscription", "description": "Subscriptions for transaction notifications by account" }
+  }
+}

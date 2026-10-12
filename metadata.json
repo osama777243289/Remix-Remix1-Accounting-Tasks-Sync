@@ -1,0 +1,8 @@
+{
+  "name": "Remix Remix1: Accounting \u0026 Tasks Sync",
+  "description": "نظام محاسبي ودليل حسابات هرمي مع تعدد العملات ومتابعة المهام اليومية مع مزامنة لحظية للموبايل والكمبيوتر والويب.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

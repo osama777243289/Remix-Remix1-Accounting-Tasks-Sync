@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /accounts/{docId} { allow read, write: if true; }
+    match /transactions/{docId} { allow read, write: if true; }
+    match /currencies/{docId} { allow read, write: if true; }
+    match /tasks/{docId} { allow read, write: if true; }
+    match /halls/{docId} { allow read, write: if true; }
+    match /bookings/{docId} { allow read, write: if true; }
+    match /authorized_devices/{docId} { allow read, write: if true; }
+    match /clients/{docId} { allow read, write: if true; }
+    match /employees/{docId} { allow read, write: if true; }
+    match /services/{docId} { allow read, write: if true; }
+    match /app_users/{docId} { allow read, write: if true; }
+    match /app_roles/{docId} { allow read, write: if true; }
+    match /vouchers/{docId} { allow read, write: if true; }
+    match /company_settings/{docId} { allow read, write: if true; }
+    match /brokers/{docId} { allow read, write: if true; }
+    match /guarantors/{docId} { allow read, write: if true; }
+    match /booking_settings/{docId} { allow read, write: if true; }
+    match /linked_accounts/{docId} { allow read, write: if true; }
+    match /recurring/{docId} { allow read, write: if true; }
+    match /payroll/{docId} { allow read, write: if true; }
+    match /standard_costs/{docId} { allow read, write: if true; }
+    match /actual_costs/{docId} { allow read, write: if true; }
+    match /cost_items/{docId} { allow read, write: if true; }
+    match /deposit_refund_requests/{docId} { allow read, write: if true; }
+    match /booking_amendment_requests/{docId} { allow read, write: if true; }
+    match /booking_discount_requests/{docId} { allow read, write: if true; }
+    match /account_notification_subscriptions/{docId} { allow read, write: if true; }
+    match /locked_dates/{docId} { allow read, write: if true; }
+    match /notification_settings/{docId} { allow read, write: if true; }
+    match /manual_notifications/{docId} { allow read, write: if true; }
+  }
+}
