@@ -1,51 +1,52 @@
 name: Build PWA to APK
-on:
-  workflow_dispatch:
+on: workflow_dispatch
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 20
-      - uses: actions/setup-java@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
-      - uses: android-actions/setup-android@v3
+          distribution: temurin
+          java-version: 17
 
-      - name: Install and Build PWA
+      - name: Install Dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Install Capacitor
+        run: npm install @capacitor/core @capacitor/cli @capacitor/android --legacy-peer-deps
+
+      - name: Try Build
         run: |
-          npm install
-          npm install @capacitor/core @capacitor/cli @capacitor/android
-          npm run build || echo "no build script, using public"
+          npm run build || echo "Build script failed, trying to use existing files"
           ls -la
-          ls -la build || ls -la public || ls -la dist
 
-      - name: Init Capacitor
+      - name: Create Android Project
         run: |
           rm -rf android
-          echo '{"appId":"com.osama.accounting","appName":"Accounting Tasks","webDir":"build/client"}' > capacitor.config.json
-          if [ ! -d "build/client" ]; then
-            if [ -d "build" ]; then
-              echo '{"appId":"com.osama.accounting","appName":"Accounting Tasks","webDir":"build"}' > capacitor.config.json
-            elif [ -d "dist" ]; then
-              echo '{"appId":"com.osama.accounting","appName":"Accounting Tasks","webDir":"dist"}' > capacitor.config.json
-            else
-              echo '{"appId":"com.osama.accounting","appName":"Accounting Tasks","webDir":"public"}' > capacitor.config.json
-            fi
-          fi
+          npx cap init "Accounting Tasks" com.osama.accounting --web-dir=public || true
+          if [ -d "build/client" ]; then npx cap init "Accounting Tasks" com.osama.accounting --web-dir=build/client --npm-client npm || true; fi
+          if [ -d "build" ]; then npx cap init "Accounting Tasks" com.osama.accounting --web-dir=build --npm-client npm || true; fi
+          echo '{"appId":"com.osama.accounting","appName":"Accounting Tasks","webDir":"public"}' > capacitor.config.json
+          if [ -d "build/client" ]; then echo '{"appId":"com.osama.accounting","appName":"Accounting Tasks","webDir":"build/client"}' > capacitor.config.json; fi
           npx cap add android
           npx cap copy
 
-      - name: Build APK
+      - name: Build APK with Gradle
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug --stacktrace
+          ./gradlew assembleDebug
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
         with:
-          name: PWA-APK
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: APK-File
+          path: android/app/build/outputs/apk/debug/*.apk
