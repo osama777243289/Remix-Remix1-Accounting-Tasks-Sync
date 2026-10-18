@@ -1,4 +1,4 @@
-name: Build Alzain Qaat APK
+name: Build PWA to APK
 
 on:
   workflow_dispatch:
@@ -8,28 +8,54 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Set up JDK 17
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install & Build
+        run: |
+          npm ci || npm install
+          npm install @capacitor/core @capacitor/cli @capacitor/android
+          npm run build
+
+      - name: Setup Capacitor for PWA
+        run: |
+          cat > capacitor.config.json <<'EOF'
+          {
+            "appId": "com.osama.accounting",
+            "appName": "Accounting Tasks",
+            "webDir": "build/client",
+            "server": {
+              "androidScheme": "https"
+            }
+          }
+          EOF
+          # لو ما وجد build/client يستخدم public
+          if [ ! -d "build/client" ]; then
+            echo '{"appId":"com.osama.accounting","appName":"Accounting Tasks","webDir":"public"}' > capacitor.config.json
+          fi
+          cat capacitor.config.json
+
+      - name: Setup Java & Android
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
           distribution: 'temurin'
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Generate Keystore
+      - name: Build APK
         run: |
-          keytool -genkey -v -keystore alzain.keystore -alias alzain -keyalg RSA -keysize 2048 -validity 10000 -storepass 123456 -keypass 123456 -dname "CN=Alzain Qaat, OU=Alzain, O=Alzain, L=Ibb, ST=Ibb, C=YE"
-
-      - name: Build Release APK
-        uses: gradle/gradle-build-action@v3
-        with:
-          arguments: assembleRelease
-          gradle-version: 8.5
+          npx cap add android || true
+          npx cap copy android
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Alzain-Qaat-APK
-          path: app/build/outputs/apk/release/*.apk
+          name: PWA-APK-Ready
+          path: android/app/build/outputs/apk/debug/*.apk
